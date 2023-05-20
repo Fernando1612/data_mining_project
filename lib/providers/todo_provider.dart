@@ -46,6 +46,7 @@ class TodoProvider with ChangeNotifier{
     notifyListeners();
   }
 
+
   Future<void> deleteTodo(int todoId) async {
     var response;
     try{
@@ -73,3 +74,5 @@ class TodoProvider with ChangeNotifier{
     notifyListeners();
   }
 }
+
+

@@ -1,3 +1,4 @@
+import 'package:data_mining_project/exploracion.dart';
 import 'package:data_mining_project/providers/todo_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -71,6 +72,11 @@ class MainPage extends StatelessWidget {
               title: Text('Contacto'),
               onTap: () {
                 // Acción al hacer clic en "Contacto"
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ExploracionDatos()
+                  ),
+                );
               },
             ),
           ],

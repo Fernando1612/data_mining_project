@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:http/http.dart' as http;
+
 
 class Inicio extends StatefulWidget {
   const Inicio({Key? key}) : super(key: key);
@@ -24,8 +26,27 @@ class _InicioState extends State<Inicio> {
     if (result != null) {
       setState(() {
         _csvBytes = result.files.single.bytes!;
+        uploadFile(_csvBytes as List<int>);
         _csvData = CsvToListConverter().convert(utf8.decode(_csvBytes!));
       });
+    }
+  }
+
+  void uploadFile(List<int> fileBytes) async {
+    String url = 'http://127.0.0.1:5000/upload'; // Cambia esto por la URL de tu servidor Flask
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'archivo',
+        fileBytes,
+        filename: 'data.csv',
+      ),
+    );
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      print('Archivo enviado correctamente');
+    } else {
+      print('Error al enviar el archivo: ${response.reasonPhrase}');
     }
   }
 
