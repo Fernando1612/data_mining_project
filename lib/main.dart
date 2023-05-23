@@ -1,4 +1,5 @@
 import 'package:data_mining_project/exploracion.dart';
+import 'package:data_mining_project/pca.dart';
 import 'package:data_mining_project/providers/todo_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -75,6 +76,17 @@ class MainPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ExploracionDatos()
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('PCA'),
+              onTap: () {
+                // Acción al hacer clic en "Contacto"
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PCA()
                   ),
                 );
               },
