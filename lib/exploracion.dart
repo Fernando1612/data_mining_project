@@ -2,25 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-Future<Map<String, dynamic>> fetchDataPreview() async {
-  final response = await http.get(Uri.parse('http://127.0.0.1:5000/data-preview'));
-  if (response.statusCode == 200) {
-    final jsonResponse = json.decode(response.body);
-    if (jsonResponse is Map<String, dynamic>) {
-      return jsonResponse;
-    } else {
-      return convertStringToFuture(jsonResponse);
-    }
-  } else {
-    throw Exception('Failed to fetch data preview');
-  }
-}
-
-Future<Map<String, dynamic>> convertStringToFuture(String jsonString) {
-  Map<String, dynamic> jsonData = json.decode(jsonString) as Map<String, dynamic>;
-  return Future.value(jsonData);
-}
-
 
 class ExploracionDatos extends StatefulWidget {
   @override
@@ -28,18 +9,27 @@ class ExploracionDatos extends StatefulWidget {
 }
 
 class _ExploracionDatosState extends State<ExploracionDatos> {
-  Map<String, dynamic> dataPreview = {};
+  String apiUrl= 'http://127.0.0.1:5000/data-preview';
+  List<String> columnNames = [];
+  List<Map<String, dynamic>> data = [];
 
   @override
   void initState() {
     super.initState();
-    fetchDataPreview().then((data) {
+    fetchData();
+  }
+
+  void fetchData() async {
+    final response = await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
       setState(() {
-        dataPreview = data;
+        columnNames = List<String>.from(jsonData['column_names']);
+        data = List<Map<String, dynamic>>.from(jsonData['data']);
       });
-    }).catchError((error) {
-      print(error);
-    });
+    } else {
+      throw Exception('Failed to fetch data');
+    }
   }
 
   @override
@@ -50,16 +40,15 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
       ),
       body: Container(
         padding: EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: dataPreview.length,
-          itemBuilder: (BuildContext context, int index) {
-            String key = dataPreview.keys.elementAt(index);
-            dynamic value = dataPreview[key];
-            return ListTile(
-              title: Text(key),
-              subtitle: Text(value.toString()),
+        child: DataTable(
+          columns: columnNames.map((name) => DataColumn(label: Text(name))).toList(),
+          rows: data.map((rowData) {
+            return DataRow(
+              cells: rowData.entries.map((entry) {
+                return DataCell(Text(entry.value.toString()));
+              }).toList(),
             );
-          },
+          }).toList(),
         ),
       ),
     );
