@@ -50,16 +50,24 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
       ),
       body: Container(
         padding: EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: dataPreview.length,
-          itemBuilder: (BuildContext context, int index) {
-            String key = dataPreview.keys.elementAt(index);
-            dynamic value = dataPreview[key];
-            return ListTile(
-              title: Text(key),
-              subtitle: Text(value.toString()),
-            );
-          },
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: DataTable(
+            columns: [
+              DataColumn(label: Text('Key')),
+              DataColumn(label: Text('Value')),
+            ],
+            rows: dataPreview.entries.map((entry) {
+              String key = entry.key;
+              dynamic value = entry.value;
+              return DataRow(
+                cells: [
+                  DataCell(Text(key)),
+                  DataCell(Text(value.toString())),
+                ],
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
