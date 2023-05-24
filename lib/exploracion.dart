@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -26,6 +27,7 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
         final jsonData = json.decode(response.body);
         setState(() {
           columnNames = List<String>.from(jsonData['column_names']);
+          columnNames.sort(); // Ordenar columnNames en orden alfabético
           data = List<Map<String, dynamic>>.from(jsonData['data']);
           isLoading = false;
         });
@@ -55,17 +57,29 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
             Expanded(
               child: isLoading
                   ? Center(
-                child: CircularProgressIndicator(), // Muestra un indicador de carga mientras los datos se están cargando
+                child: CircularProgressIndicator(),
               )
-                  : DataTable(
-                columns: columnNames.map((name) => DataColumn(label: Text(name))).toList(),
-                rows: data.map((rowData) {
-                  return DataRow(
-                    cells: rowData.entries.map((entry) {
-                      return DataCell(Text(entry.value.toString()));
-                    }).toList(),
-                  );
-                }).toList(),
+                  : SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Scrollable(
+                  viewportBuilder: (BuildContext context, ViewportOffset position) {
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        columns: columnNames
+                            .map((name) => DataColumn(label: Text(name)))
+                            .toList(),
+                        rows: data.map((rowData) {
+                          return DataRow(
+                            cells: rowData.entries.map((entry) {
+                              return DataCell(Text(entry.value.toString()));
+                            }).toList(),
+                          );
+                        }).toList(),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ],
