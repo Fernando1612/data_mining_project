@@ -11,6 +11,7 @@ class _PCAState extends State<PCA> {
   String apiUrl = 'http://127.0.0.1:5000/pca?n_components=2';
   List<String> columnNames = [];
   List<Map<String, dynamic>> data = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -25,6 +26,7 @@ class _PCAState extends State<PCA> {
       setState(() {
         columnNames = List<String>.from(jsonData['column_names']);
         data = List<Map<String, dynamic>>.from(jsonData['data']);
+        isLoading = false;
       });
     } else {
       throw Exception('Failed to fetch data');
@@ -47,7 +49,11 @@ class _PCAState extends State<PCA> {
             ),
             SizedBox(height: 16.0),
             Expanded(
-              child: DataTable(
+              child: isLoading
+                  ? Center(
+                child: CircularProgressIndicator(), // Muestra un indicador de carga mientras los datos se están cargando
+              )
+                  : DataTable(
                 columns: columnNames.map((name) => DataColumn(label: Text(name))).toList(),
                 rows: data.map((rowData) {
                   return DataRow(
