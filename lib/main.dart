@@ -1,10 +1,7 @@
 import 'package:data_mining_project/exploracion.dart';
 import 'package:data_mining_project/pca.dart';
-import 'package:data_mining_project/providers/todo_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import 'acerca.dart';
+import 'bosques.dart';
 import 'inicio.dart';
 
 void main() {
@@ -14,16 +11,14 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-        value: TodoProvider(),
-      child: MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Mi Página Principal',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: MainPage(),
-    ));
+    );
   }
 }
 
@@ -60,17 +55,7 @@ class MainPage extends StatelessWidget {
               },
             ),
             ListTile(
-              title: Text('Acerca de'),
-              onTap: () {
-                // Acción al hacer clic en "Acerca de"
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Acerca()),
-                );
-              },
-            ),
-            ListTile(
-              title: Text('Contacto'),
+              title: Text('EDA'),
               onTap: () {
                 // Acción al hacer clic en "Contacto"
                 Navigator.push(
@@ -87,6 +72,17 @@ class MainPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => PCA()
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Bosques'),
+              onTap: () {
+                // Acción al hacer clic en "Contacto"
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BosquesScreen()
                   ),
                 );
               },

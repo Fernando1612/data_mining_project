@@ -33,12 +33,9 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
         throw Exception('Failed to fetch data');
       }
     } catch (e) {
-      // Handle the error
+      print(e);
     }
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {

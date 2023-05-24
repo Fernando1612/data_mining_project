@@ -8,18 +8,25 @@ class PCA extends StatefulWidget {
 }
 
 class _PCAState extends State<PCA> {
-  String apiUrl = 'http://127.0.0.1:5000/pca?n_components=2';
+  String apiUrl = '';
   List<String> columnNames = [];
   List<Map<String, dynamic>> data = [];
-  bool isLoading = true;
+  bool isLoading = false;
+  TextEditingController componentsController = TextEditingController();
+  int components = 2;
 
   @override
   void initState() {
     super.initState();
-    fetchData();
   }
 
   void fetchData() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    apiUrl = 'http://127.0.0.1:5000/pca?n_components=$components';
+
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
@@ -48,22 +55,73 @@ class _PCAState extends State<PCA> {
               style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16.0),
-            Expanded(
-              child: isLoading
-                  ? Center(
-                child: CircularProgressIndicator(), // Muestra un indicador de carga mientras los datos se están cargando
-              )
-                  : DataTable(
-                columns: columnNames.map((name) => DataColumn(label: Text(name))).toList(),
-                rows: data.map((rowData) {
-                  return DataRow(
-                    cells: rowData.entries.map((entry) {
-                      return DataCell(Text(entry.value.toString()));
-                    }).toList(),
-                  );
-                }).toList(),
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: componentsController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Número de componentes',
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        components = int.tryParse(value) ?? 2;
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(width: 16.0),
+                ElevatedButton(
+                  onPressed: () {
+                    fetchData();
+                  },
+                  child: Text('Obtener datos'),
+                ),
+              ],
             ),
+            SizedBox(height: 16.0),
+            if (isLoading)
+              CircularProgressIndicator()
+            else if (data.isEmpty)
+              Text('Presiona el botón para obtener los datos.')
+            else
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Center(
+                    child: DataTable(
+                      columns: columnNames
+                          .map(
+                            (name) => DataColumn(
+                          label: Center(
+                            child: Text(
+                              name,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      )
+                          .toList(),
+                      rows: data
+                          .sublist(0, 10)
+                          .map(
+                            (rowData) => DataRow(
+                          cells: rowData.entries
+                              .map(
+                                (entry) => DataCell(
+                              Center(
+                                child: Text(entry.value.toString()),
+                              ),
+                            ),
+                          )
+                              .toList(),
+                        ),
+                      )
+                          .toList(),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
