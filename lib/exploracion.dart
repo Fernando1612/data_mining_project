@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:charts_flutter/flutter.dart' as charts;
 
 class ExploracionDatos extends StatefulWidget {
   @override
@@ -54,14 +53,18 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
     fetchDataPreview();
     fetchDataStats();
     fetchDataNulls();
-    fetchHistogramImage().then((_) {
-      // La función fetchHistogramImage() ha terminado
-      fetchBoxplotImage().then((_) {
-        // La función fetchBoxplotImage() ha terminado
-        fetchHeatmapImage();
+    // Retrasar el inicio de fetchHistogramImage() durante 2 segundos
+    Future.delayed(Duration(seconds: 2), () {
+      fetchHistogramImage().then((_) {
+        // La función fetchHistogramImage() ha terminado
+        fetchBoxplotImage().then((_) {
+          // La función fetchBoxplotImage() ha terminado
+          fetchHeatmapImage();
+        });
       });
     });
   }
+
 
   Future<void> fetchDataPreview() async {
     try {
