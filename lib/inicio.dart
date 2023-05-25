@@ -5,7 +5,6 @@ import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 
-
 class Inicio extends StatefulWidget {
   const Inicio({Key? key}) : super(key: key);
 
@@ -16,6 +15,7 @@ class Inicio extends StatefulWidget {
 class _InicioState extends State<Inicio> {
   Uint8List? _csvBytes;
   List<List<dynamic>>? _csvData;
+  String? _message;
 
   Future<void> _openFileExplorer() async {
     final result = await FilePicker.platform.pickFiles(
@@ -28,6 +28,7 @@ class _InicioState extends State<Inicio> {
         _csvBytes = result.files.single.bytes!;
         uploadFile(_csvBytes as List<int>);
         _csvData = CsvToListConverter().convert(utf8.decode(_csvBytes!));
+        _message = 'Archivo cargado con éxito.';
       });
     }
   }
@@ -56,44 +57,37 @@ class _InicioState extends State<Inicio> {
       appBar: AppBar(
         title: const Text('Inicio'),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          if (_csvBytes == null)
-            const Text('No se ha cargado ningún archivo.')
-          else
-            Column(
-              children: [
-                DataTable(
-                  columns: _csvData!
-                      .first
-                      .map((e) => DataColumn(label: Text(e.toString())))
-                      .toList(),
-                  rows: _csvData!
-                      .skip(1)
-                      .take(10)
-                      .map((row) => DataRow(
-                    cells: row
-                        .map((cell) => DataCell(Text(cell.toString())))
-                        .toList(),
-                  ))
-                      .toList(),
-                ),
-                const SizedBox(height: 16),
-              ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (_csvBytes == null)
+              const Text('No se ha cargado ningún archivo.')
+            else
+              Column(
+                children: [
+                  if (_message != null)
+                    Text(
+                      _message!,
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                ],
+              ),
+            ElevatedButton(
+              onPressed: _openFileExplorer,
+              child: const Text('Cargar archivo CSV'),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.blue,
+                onPrimary: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
+                textStyle: TextStyle(fontSize: 20.0),
+              ),
             ),
-          ElevatedButton(
-            onPressed: _openFileExplorer,
-            child: const Text('Cargar archivo CSV'),
-            style: ElevatedButton.styleFrom(
-              primary: Colors.blue,
-              onPrimary: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
-              textStyle: TextStyle(fontSize: 20.0),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

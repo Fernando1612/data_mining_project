@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Mi Página Principal',
+      title: 'Mineria de Datos',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -27,7 +27,7 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mi Página Principal'),
+        title: Text('Proyecto de mineria de datos'),
       ),
       drawer: Drawer(
         child: ListView(
@@ -92,7 +92,7 @@ class MainPage extends StatelessWidget {
       ),
       body: Center(
         child: Text(
-          '¡Bienvenido a mi página principal!',
+          'Proyecto de mineria de datos',
           style: TextStyle(fontSize: 24),
         ),
       ),
