@@ -1,7 +1,10 @@
+import 'package:data_mining_project/clasificacion.dart';
 import 'package:data_mining_project/exploracion.dart';
 import 'package:data_mining_project/pca.dart';
 import 'package:flutter/material.dart';
+import 'bosquePrediccion.dart';
 import 'bosques.dart';
+import 'cargar.dart';
 import 'inicio.dart';
 
 void main() {
@@ -77,12 +80,45 @@ class MainPage extends StatelessWidget {
               },
             ),
             ListTile(
-              title: Text('Bosques'),
+              title: Text('Bosques Clasificación'),
               onTap: () {
                 // Acción al hacer clic en "Contacto"
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => BosquesScreen()
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Bosques Predicción'),
+              onTap: () {
+                // Acción al hacer clic en "Contacto"
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BosquesPrediccion()
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Clasificación'),
+              onTap: () {
+                // Acción al hacer clic en "Contacto"
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Clasificacion()
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Cargar modelo'),
+              onTap: () {
+                // Acción al hacer clic en "Contacto"
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CargarModelo()
                   ),
                 );
               },

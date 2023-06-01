@@ -19,9 +19,9 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
   String histogramImageUrl = '';
   String boxplotImageUrl = '';
   String heatmapImageUrl = '';
-  late Uint8List imageBytesHeat;
-  late Uint8List imageBytesBox;
-  late Uint8List imageBytesHist;
+  late Uint8List? imageBytesHeat;
+  late Uint8List? imageBytesBox;
+  late Uint8List? imageBytesHist;
 
   // Variables para Tabla de EDA
   List<String> columnNames = [];
@@ -297,14 +297,18 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
               SizedBox(height: 8.0),
               Align(
                 alignment: Alignment.center,
-                child: Container(
-                  height: 300,
-                  child: isImageLoadedHist
-                      ? InteractiveViewer(
-                    child: Image.memory(imageBytesHist),
-                    maxScale: 5.0, // Define el máximo nivel de zoom permitido
-                  )
-                      : Center(child: CircularProgressIndicator()),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Container(
+                    height: 600,
+                    width: MediaQuery.of(context).size.width - 32.0,
+                    child: isImageLoadedHist
+                        ? FittedBox(
+                      fit: BoxFit.fill,
+                      child: Image.memory(imageBytesHist!),
+                    )
+                        : Center(child: CircularProgressIndicator()),
+                  ),
                 ),
               ),
               SizedBox(height: 16.0),
@@ -318,14 +322,18 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
               SizedBox(height: 8.0),
               Align(
                 alignment: Alignment.center,
-                child: Container(
-                  height: 300,
-                  child: isImageLoadedBox
-                      ? InteractiveViewer(
-                    child: Image.memory(imageBytesBox),
-                    maxScale: 5.0, // Define el máximo nivel de zoom permitido
-                  )
-                      : Center(child: CircularProgressIndicator()),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Container(
+                    height: 600,
+                    width: MediaQuery.of(context).size.width - 32.0,
+                    child: isImageLoadedBox
+                        ? FittedBox(
+                      fit: BoxFit.fill,
+                      child: Image.memory(imageBytesBox!),
+                    )
+                        : Center(child: CircularProgressIndicator()),
+                  ),
                 ),
               ),
               SizedBox(height: 16.0),
@@ -339,14 +347,18 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
               SizedBox(height: 8.0),
               Align(
                 alignment: Alignment.center,
-                child: Container(
-                  height: 300,
-                  child: isImageLoadedHeat
-                      ? InteractiveViewer(
-                    child: Image.memory(imageBytesHeat),
-                    maxScale: 5.0, // Define el máximo nivel de zoom permitido
-                  )
-                      : Center(child: CircularProgressIndicator()),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Container(
+                    height: 600,
+                    width: MediaQuery.of(context).size.width - 32.0,
+                    child: isImageLoadedHeat
+                        ? FittedBox(
+                      fit: BoxFit.fill,
+                      child: Image.memory(imageBytesHeat!),
+                    )
+                        : Center(child: CircularProgressIndicator()),
+                  ),
                 ),
               ),
             ],
@@ -355,11 +367,5 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
       ),
     );
   }
-}
-
-class ChartData {
-  final String columnName;
-  final double value;
-  ChartData(this.columnName, this.value);
 }
 
