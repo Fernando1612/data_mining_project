@@ -102,7 +102,7 @@ class MainPage extends StatelessWidget {
               },
             ),
             ListTile(
-              title: Text('Clasificación'),
+              title: Text('Kmeans'),
               onTap: () {
                 // Acción al hacer clic en "Contacto"
                 Navigator.push(
