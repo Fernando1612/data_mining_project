@@ -47,12 +47,9 @@ class Predecir extends StatelessWidget {
     );
   }
 
-  void _executePrediction(
-      BuildContext context, List<TextEditingController> textControllers) {
+  void _executePrediction(BuildContext context, List<TextEditingController> textControllers) {
     // Obtener los valores de las características ingresadas
-    List<String> featureValues = textControllers
-        .map((controller) => controller.text)
-        .toList(); // Obtener los valores de los controladores
+    List<String> featureValues = textControllers.map((controller) => controller.text).toList(); // Obtener los valores de los controladores
 
     // Construir el URL de la solicitud GET para enviar las características a la API Flask
     String url = 'http://127.0.0.1:5000/forest-predict?';

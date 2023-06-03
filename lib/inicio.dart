@@ -13,9 +13,9 @@ class Inicio extends StatefulWidget {
 }
 
 class _InicioState extends State<Inicio> {
-  Uint8List? _csvBytes;
-  List<List<dynamic>>? _csvData;
-  String? _message;
+  Uint8List? _csvBytes; // Bytes del archivo CSV seleccionado
+  List<List<dynamic>>? _csvData; // Datos del archivo CSV convertidos en una matriz
+  String? _message; // Mensaje para mostrar el estado del archivo
 
   Future<void> _openFileExplorer() async {
     final result = await FilePicker.platform.pickFiles(
@@ -25,25 +25,25 @@ class _InicioState extends State<Inicio> {
 
     if (result != null) {
       setState(() {
-        _csvBytes = result.files.single.bytes!;
-        uploadFile(_csvBytes as List<int>);
-        _csvData = CsvToListConverter().convert(utf8.decode(_csvBytes!));
-        _message = 'Archivo cargado con éxito.';
+        _csvBytes = result.files.single.bytes!; // Obtener los bytes del archivo seleccionado
+        uploadFile(_csvBytes as List<int>); // Subir el archivo al servidor
+        _csvData = CsvToListConverter().convert(utf8.decode(_csvBytes!)); // Convertir los bytes del archivo en una matriz de datos
+        _message = 'Archivo cargado con éxito.'; // Actualizar el mensaje de estado
       });
     }
   }
 
   void uploadFile(List<int> fileBytes) async {
     String url = 'http://127.0.0.1:5000/upload'; // Cambia esto por la URL de tu servidor Flask
-    var request = http.MultipartRequest('POST', Uri.parse(url));
+    var request = http.MultipartRequest('POST', Uri.parse(url)); // Crear una solicitud HTTP POST multipart
     request.files.add(
       http.MultipartFile.fromBytes(
         'archivo',
         fileBytes,
         filename: 'data.csv',
       ),
-    );
-    var response = await request.send();
+    ); // Agregar el archivo como un campo multipart en la solicitud
+    var response = await request.send(); // Enviar la solicitud
     if (response.statusCode == 200) {
       print('Archivo enviado correctamente');
     } else {
@@ -80,8 +80,7 @@ class _InicioState extends State<Inicio> {
               onPressed: _openFileExplorer,
               child: const Text('Cargar archivo CSV'),
               style: ElevatedButton.styleFrom(
-                primary: Colors.blue,
-                onPrimary: Colors.white,
+                foregroundColor: Colors.white, backgroundColor: Colors.blue,
                 padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
                 textStyle: TextStyle(fontSize: 20.0),
               ),

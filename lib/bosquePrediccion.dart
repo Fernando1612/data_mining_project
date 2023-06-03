@@ -11,24 +11,23 @@ class BosquesPrediccion extends StatefulWidget {
 }
 
 class _BosquesPrediccionState extends State<BosquesPrediccion> {
-  List<String> columnNames = [];
-  String targetColumn = '';
-  int nEstimators = 100;
-  String criterion = 'friendman_mse';
-  int? maxDepth = null;
-  int minSamplesSplit = 2;
-  int minSamplesLeaf = 1;
-  String maxFeatures = 'auto';
-  double mse = 0.0;
-  List<dynamic> featureImportances = [''];
-  double meanAbsoluteError = 0.0;
-  double rmse = 0.0;
-  double r2Score = 0.0;
-  bool isButtonEnabled = false;
+  List<String> columnNames = []; // Lista de nombres de columna
+  String targetColumn = ''; // Columna objetivo
+  int nEstimators = 100; // Número de estimadores
+  String criterion = 'friendman_mse'; // Criterio
+  int? maxDepth = null; // Profundidad máxima
+  int minSamplesSplit = 2; // Número mínimo de muestras para dividir un nodo
+  int minSamplesLeaf = 1; // Número mínimo de muestras para formar una hoja
+  String maxFeatures = 'auto'; // Número de características a considerar
+  double mse = 0.0; // Error cuadrático medio
+  List<dynamic> featureImportances = ['']; // Importancia de características
+  double meanAbsoluteError = 0.0; // Error absoluto medio
+  double rmse = 0.0; // Error cuadrático medio de raíz
+  double r2Score = 0.0; // Puntaje R2
+  bool isButtonEnabled = false; // Estado del botón
   String savedFileName = ''; // Nombre de archivo guardado
-  late Uint8List predictImage;
-  String encodedImage = '';
-
+  late Uint8List predictImage; // Imagen de pronóstico
+  String encodedImage = ''; // Imagen codificada
 
   @override
   void initState() {
@@ -36,6 +35,7 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
     fetchColumnNames();
   }
 
+  // Obtener los nombres de las columnas
   Future<void> fetchColumnNames() async {
     final response =
     await http.get(Uri.parse('http://127.0.0.1:5000/column-names'));
@@ -47,14 +47,17 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
     }
   }
 
+  // Actualizar la columna objetivo
   void updateTargetColumn(String value) {
     setState(() {
       targetColumn = value;
     });
   }
 
+  // Entrenar el modelo
   void trainModel() async {
-    String apiUrl = 'http://127.0.0.1:5000/forest-regressor-train?target_column=$targetColumn&n_estimators=$nEstimators&criterion=$criterion&max_depth=$maxDepth&min_samples_split=$minSamplesSplit&min_samples_leaf=$minSamplesLeaf&max_features=$maxFeatures';
+    String apiUrl =
+        'http://127.0.0.1:5000/forest-regressor-train?target_column=$targetColumn&n_estimators=$nEstimators&criterion=$criterion&max_depth=$maxDepth&min_samples_split=$minSamplesSplit&min_samples_leaf=$minSamplesLeaf&max_features=$maxFeatures';
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -74,9 +77,10 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
     }
   }
 
-
-  void saveModelCompute(String name) async{
-    String apiUrl = 'http://127.0.0.1:5000/guardar-modelo-regresor?file_path=$name.pkl';
+  // Guardar el modelo computado
+  void saveModelCompute(String name) async {
+    String apiUrl =
+        'http://127.0.0.1:5000/guardar-modelo-regresor?file_path=$name.pkl';
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       setState(() {
@@ -88,8 +92,10 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
     }
   }
 
-  void saveColumnsModel(String name,String target) async{
-    String apiUrl = 'http://127.0.0.1:5000/guardar-column-names-regresor?file_path=$name.csv&target=$target';
+  // Guardar las columnas del modelo
+  void saveColumnsModel(String name, String target) async {
+    String apiUrl =
+        'http://127.0.0.1:5000/guardar-column-names-regresor?file_path=$name.csv&target=$target';
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       setState(() {
@@ -101,9 +107,11 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
     }
   }
 
+  // Navegar a otra página
   void navigateToOtherPage() {
     // Filtrar las columnas y pasar solo las que no son la columna objetivo
-    List<String> filteredColumns = columnNames.where((col) => col != targetColumn).toList();
+    List<String> filteredColumns =
+    columnNames.where((col) => col != targetColumn).toList();
 
     // Navegar a otra página y pasar columnNames
     Navigator.push(
@@ -112,6 +120,7 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
     );
   }
 
+  // Guardar el modelo
   void saveModel(BuildContext context) async {
     showDialog(
       context: context,
@@ -146,7 +155,7 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
             ElevatedButton(
               onPressed: () {
                 saveModelCompute(savedFileName);
-                saveColumnsModel(savedFileName,targetColumn);
+                saveColumnsModel(savedFileName, targetColumn);
                 Navigator.of(context).pop();
                 // Aquí puedes guardar el modelo utilizando savedFileName
               },
@@ -157,7 +166,6 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -330,13 +338,13 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
                   ],
                 ),
               SizedBox(height: 16.0),
-              if (isButtonEnabled) // Mostrar el nuevo botón si está habilitado
+              if (isButtonEnabled) // Mostrar el nuevo botón solo si el modelo se ha entrenado
                 ElevatedButton(
-                  onPressed: navigateToOtherPage,
-                  child: Text('Nueva clasificación'),
+                  onPressed: () => navigateToOtherPage(),
+                  child: Text('Predecir'),
                 ),
               SizedBox(height: 16.0),
-              if (isButtonEnabled) // Mostrar el nuevo botón si está habilitado
+              if (isButtonEnabled) // Mostrar el botón de guardar solo si el modelo se ha entrenado
                 ElevatedButton(
                   onPressed: () => saveModel(context),
                   child: Text('Guardar modelo'),

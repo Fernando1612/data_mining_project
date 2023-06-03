@@ -24,6 +24,7 @@ class _DetallesArchivoPklState extends State<DetallesArchivoPkl> {
     cargarColumnas();
   }
 
+  // Cargar las columnas del archivo CSV
   Future<void> cargarColumnas() async {
     final url = Uri.parse('http://127.0.0.1:5000/cargar-column-names?file_path=${widget.nombreArchivo}.csv');
     try {
@@ -45,7 +46,7 @@ class _DetallesArchivoPklState extends State<DetallesArchivoPkl> {
 
   @override
   void dispose() {
-    // Dispose all text controllers when the widget is disposed
+    // Liberar todos los controladores de texto cuando el widget se elimine
     for (var controller in textControllers) {
       controller.dispose();
     }
@@ -104,14 +105,12 @@ class _DetallesArchivoPklState extends State<DetallesArchivoPkl> {
     );
   }
 
-  void _executePrediction(
-      BuildContext context, List<TextEditingController> textControllers) {
+  // Ejecutar la predicción
+  void _executePrediction(BuildContext context, List<TextEditingController> textControllers) {
     // Obtener los valores de las características ingresadas
-    List<String> featureValues = textControllers
-        .map((controller) => controller.text)
-        .toList(); // Obtener los valores de los controladores
+    List<String> featureValues = textControllers.map((controller) => controller.text).toList();
 
-    // Construir el URL de la solicitud GET para enviar las características a la API Flask
+    // Construir la URL de la solicitud GET para enviar las características a la API Flask
     String url = 'http://127.0.0.1:5000/predict-modelo?';
     for (int i = 0; i < columnNames.length; i++) {
       String paramName = columnNames[i];
@@ -152,5 +151,4 @@ class _DetallesArchivoPklState extends State<DetallesArchivoPkl> {
       print('Error: $error');
     });
   }
-
 }

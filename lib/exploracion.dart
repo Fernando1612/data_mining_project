@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
@@ -46,7 +45,6 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
   bool isImageLoadedBox = false;
   bool isImageLoadedHeat = false;
 
-
   @override
   void initState() {
     super.initState();
@@ -65,7 +63,7 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
     });
   }
 
-
+  // Obtener los datos de vista previa
   Future<void> fetchDataPreview() async {
     try {
       final response = await http.get(Uri.parse(apiUrl));
@@ -85,6 +83,7 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
     }
   }
 
+  // Obtener los datos de estadísticas
   Future<void> fetchDataStats() async {
     try {
       final response = await http.get(Uri.parse(apiUrlStats));
@@ -105,6 +104,7 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
     }
   }
 
+  // Obtener los datos de valores nulos
   Future<void> fetchDataNulls() async {
     try {
       final response = await http.get(Uri.parse(apiUrlNulls));
@@ -123,6 +123,7 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
     }
   }
 
+  // Obtener la imagen del histograma
   Future<void> fetchHistogramImage() async {
     try {
       final response = await http.get(Uri.parse('http://127.0.0.1:5000/plot-histogram'));
@@ -140,6 +141,7 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
     }
   }
 
+  // Obtener la imagen del diagrama de caja
   Future<void> fetchBoxplotImage() async {
     try {
       final response = await http.get(Uri.parse('http://127.0.0.1:5000/plot-boxplot'));
@@ -157,6 +159,7 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
     }
   }
 
+  // Obtener la imagen del mapa de calor
   Future<void> fetchHeatmapImage() async {
     try {
       final response = await http.get(Uri.parse('http://127.0.0.1:5000/plot-heatmap'));
@@ -173,7 +176,6 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
       print(e);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -340,7 +342,7 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'Mapa de Calor',
+                  'Mapa de calor',
                   style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                 ),
               ),

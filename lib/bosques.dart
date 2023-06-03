@@ -5,29 +5,27 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 
-
 class BosquesScreen extends StatefulWidget {
   @override
   _BosquesScreenState createState() => _BosquesScreenState();
 }
 
 class _BosquesScreenState extends State<BosquesScreen> {
-  List<String> columnNames = [];
-  String targetColumn = '';
-  int nEstimators = 100;
-  String criterion = 'gini';
-  int? maxDepth = null;
-  int minSamplesSplit = 2;
-  int minSamplesLeaf = 1;
-  String maxFeatures = 'auto';
-  late Uint8List rocImage;
-  late Uint8List matrixImage;
-  double accuracy = 0.0;
-  String encodedImage = '';
-  String encodedImageMatrix = '';
-  bool isButtonEnabled = false;
+  List<String> columnNames = []; // Lista de nombres de columnas
+  String targetColumn = ''; // Columna objetivo seleccionada
+  int nEstimators = 100; // Número de estimadores para el modelo de bosques aleatorios
+  String criterion = 'gini'; // Criterio para la selección de características en el modelo
+  int? maxDepth = null; // Profundidad máxima de los árboles en el modelo
+  int minSamplesSplit = 2; // Número mínimo de muestras requeridas para dividir un nodo
+  int minSamplesLeaf = 1; // Número mínimo de muestras requeridas para formar una hoja
+  String maxFeatures = 'auto'; // Número de características a considerar en cada división
+  late Uint8List rocImage; // Imagen de la curva ROC
+  late Uint8List matrixImage; // Imagen de la matriz de confusión
+  double accuracy = 0.0; // Precisión del modelo
+  String encodedImage = ''; // Imagen codificada en base64 (curva ROC)
+  String encodedImageMatrix = ''; // Imagen codificada en base64 (matriz de confusión)
+  bool isButtonEnabled = false; // Indicador de si el botón está habilitado
   String savedFileName = ''; // Nombre de archivo guardado
-
 
   @override
   void initState() {
@@ -35,6 +33,7 @@ class _BosquesScreenState extends State<BosquesScreen> {
     fetchColumnNames();
   }
 
+  // Obtener los nombres de las columnas desde el servidor
   Future<void> fetchColumnNames() async {
     final response =
     await http.get(Uri.parse('http://127.0.0.1:5000/column-names'));
@@ -46,12 +45,14 @@ class _BosquesScreenState extends State<BosquesScreen> {
     }
   }
 
+  // Actualizar la columna objetivo seleccionada
   void updateTargetColumn(String value) {
     setState(() {
       targetColumn = value;
     });
   }
 
+  // Entrenar el modelo de bosques aleatorios
   void trainModel() async {
     String apiUrl =
         'http://127.0.0.1:5000/forest?target_column=$targetColumn&n_estimators=$nEstimators&criterion=$criterion&max_depth=$maxDepth&min_samples_split=$minSamplesSplit&min_samples_leaf=$minSamplesLeaf&max_features=$maxFeatures';
@@ -62,7 +63,7 @@ class _BosquesScreenState extends State<BosquesScreen> {
         accuracy = data['accuracy'];
         encodedImage = data['roc_image'];
         encodedImageMatrix = data['matrix_image'];
-        isButtonEnabled = true; // Activar el nuevo botón
+        isButtonEnabled = true; // Habilitar el botón adicional
       });
       // Decodificar la imagen codificada en base64
       rocImage = base64Decode(encodedImage);
@@ -72,20 +73,22 @@ class _BosquesScreenState extends State<BosquesScreen> {
     }
   }
 
-  void saveModelCompute(String name) async{
+  // Guardar el modelo de clasificación
+  void saveModelCompute(String name) async {
     String apiUrl = 'http://127.0.0.1:5000/guardar-modelo-clasificador?file_path=$name.pkl';
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       setState(() {
         // La solicitud fue exitosa y se recibió la imagen
-         //= response.body;
+        //= response.body;
       });
     } else {
       throw Exception('Failed save model');
     }
   }
 
-  void saveColumnsModel(String name,String target) async{
+  // Guardar los nombres de las columnas
+  void saveColumnsModel(String name, String target) async {
     String apiUrl = 'http://127.0.0.1:5000/guardar-column-names?file_path=$name.csv&target=$target';
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
@@ -98,6 +101,7 @@ class _BosquesScreenState extends State<BosquesScreen> {
     }
   }
 
+  // Navegar a la página de predicción
   void navigateToOtherPage() {
     // Filtrar las columnas y pasar solo las que no son la columna objetivo
     List<String> filteredColumns = columnNames.where((col) => col != targetColumn).toList();
@@ -109,6 +113,7 @@ class _BosquesScreenState extends State<BosquesScreen> {
     );
   }
 
+  // Mostrar el diálogo para guardar el modelo
   void saveModel(BuildContext context) async {
     showDialog(
       context: context,
@@ -143,7 +148,7 @@ class _BosquesScreenState extends State<BosquesScreen> {
             ElevatedButton(
               onPressed: () {
                 saveModelCompute(savedFileName);
-                saveColumnsModel(savedFileName,targetColumn);
+                saveColumnsModel(savedFileName, targetColumn);
                 Navigator.of(context).pop();
                 // Aquí puedes guardar el modelo utilizando savedFileName
               },
@@ -313,8 +318,3 @@ class _BosquesScreenState extends State<BosquesScreen> {
     );
   }
 }
-
-
-
-
-

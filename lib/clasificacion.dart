@@ -12,25 +12,24 @@ class Clasificacion extends StatefulWidget {
 }
 
 class _ClasificacionState extends State<Clasificacion> {
-  String apiUrl = '';
-  List<String> columnNames = [];
-  List<Map<String, dynamic>> data = [];
-  bool isDataLoaded = false;
-  bool isLoadingPlot = false;
-  bool isLoadingData = false; // Track loading data state
-  TextEditingController componentsController = TextEditingController();
-  int components = 2;
-  String selectedScaler = 'StandardScaler';
-  List<String> scalerOptions = ['StandardScaler', 'MinMaxScaler', 'Normalizer'];
-  late Uint8List? imageElbow;
-  List<String> columnNamesCentroide = [];
-  List<Map<String, dynamic>> dataCentroide = [];
-  List<String> columnNamesCount = [];
-  List<Map<String, dynamic>> dataCount = [];
-  late Uint8List predictImage;
-  String encodedImage = '';
-
-  late String savedFileName;
+  String apiUrl = ''; // URL de la API
+  List<String> columnNames = []; // Nombres de las columnas del conjunto de datos
+  List<Map<String, dynamic>> data = []; // Datos del conjunto de datos
+  bool isDataLoaded = false; // Indicador de si los datos han sido cargados correctamente
+  bool isLoadingPlot = false; // Indicador de si el gráfico está cargando
+  bool isLoadingData = false; // Indicador de si los datos están cargando
+  TextEditingController componentsController = TextEditingController(); // Controlador del campo de entrada del número de clusters
+  int components = 2; // Número de clusters seleccionado
+  String selectedScaler = 'StandardScaler'; // Escalador seleccionado
+  List<String> scalerOptions = ['StandardScaler', 'MinMaxScaler', 'Normalizer']; // Opciones de escalador
+  late Uint8List? imageElbow; // Imagen del gráfico
+  List<String> columnNamesCentroide = []; // Nombres de las columnas del conjunto de datos de centroides
+  List<Map<String, dynamic>> dataCentroide = []; // Datos del conjunto de datos de centroides
+  List<String> columnNamesCount = []; // Nombres de las columnas del conjunto de datos de conteo
+  List<Map<String, dynamic>> dataCount = []; // Datos del conjunto de datos de conteo
+  late Uint8List predictImage; // Imagen del resultado de la predicción
+  String encodedImage = ''; // Imagen codificada en base64
+  late String savedFileName; // Nombre del archivo guardado
 
   @override
   void initState() {
@@ -38,10 +37,12 @@ class _ClasificacionState extends State<Clasificacion> {
     fetchDataPlot();
   }
 
-  isColumnDataNotEmpty() {
+  // Comprueba si los datos de las columnas no están vacíos
+  bool isColumnDataNotEmpty() {
     return columnNames.isNotEmpty && data.isNotEmpty;
   }
 
+  // Obtiene los datos del gráfico de elbow desde la API
   void fetchDataPlot() async {
     apiUrl =
     'http://127.0.0.1:5000/kmeans-elbow?n_components=$components&scaler_type=$selectedScaler';
@@ -52,16 +53,18 @@ class _ClasificacionState extends State<Clasificacion> {
         isLoadingPlot = true;
       });
     } else {
-      throw Exception('Failed to fetch data');
+      throw Exception('Error al obtener los datos');
     }
   }
 
+  // Obtiene los datos del conjunto de datos desde la API
   void fetchData() async {
     setState(() {
-      isLoadingData = true; // Set loading data state to true
+      isLoadingData = true; // Establece el indicador de carga de datos en true
     });
 
-    apiUrl = 'http://127.0.0.1:5000/kmeans?n_clusters=$components&scaler_type=$selectedScaler';
+    apiUrl =
+    'http://127.0.0.1:5000/kmeans?n_clusters=$components&scaler_type=$selectedScaler';
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
@@ -70,7 +73,8 @@ class _ClasificacionState extends State<Clasificacion> {
         columnNames.sort();
         data = List<Map<String, dynamic>>.from(jsonData['data']);
         isDataLoaded = true;
-        columnNamesCentroide = List<String>.from(jsonData['column_names_centroide']);
+        columnNamesCentroide =
+        List<String>.from(jsonData['column_names_centroide']);
         columnNamesCentroide.sort();
         dataCentroide = List<Map<String, dynamic>>.from(jsonData['data_centroide']);
         columnNamesCount = List<String>.from(jsonData['column_names_count']);
@@ -79,14 +83,15 @@ class _ClasificacionState extends State<Clasificacion> {
 
         encodedImage = jsonData['kmeans_image'];
 
-        isLoadingData = false; // Set loading data state to false
+        isLoadingData = false; // Establece el indicador de carga de datos en false
       });
       predictImage = base64Decode(encodedImage);
     } else {
-      throw Exception('Failed to fetch data');
+      throw Exception('Error al obtener los datos');
     }
   }
 
+  // Guarda los datos del conjunto de datos en formato CSV
   void saveDataCSV(String name,String type,int n) async{
     String apiUrl = 'http://127.0.0.1:5000/guardar-data-frame?file_path=$name.csv&scaler_type=$type&n_clusters=$n';
     final response = await http.get(Uri.parse(apiUrl));
@@ -96,10 +101,11 @@ class _ClasificacionState extends State<Clasificacion> {
         //= response.body;
       });
     } else {
-      throw Exception('Failed save model');
+      throw Exception('Error al guardar el modelo');
     }
   }
 
+  // Muestra un diálogo para guardar el conjunto de datos
   Future<void> saveDataframe() async {
     final textFieldController = TextEditingController();
     return showDialog<void>(
@@ -201,7 +207,7 @@ class _ClasificacionState extends State<Clasificacion> {
                 ),
               ),
               SizedBox(height: 16.0),
-              isLoadingData // Check if data is loading
+              isLoadingData // Verifica si los datos se están cargando
                   ? Center(
                 child: CircularProgressIndicator(),
               )
@@ -223,7 +229,7 @@ class _ClasificacionState extends State<Clasificacion> {
                     : Container(),
               ),
               SizedBox(height: 16.0),
-              isLoadingData // Check if data is loading
+              isLoadingData // Verifica si los datos se están cargando
                   ? Center(
                 child: CircularProgressIndicator(),
               )
@@ -245,7 +251,7 @@ class _ClasificacionState extends State<Clasificacion> {
                     : Container(),
               ),
               SizedBox(height: 16.0),
-              isLoadingData // Check if data is loading
+              isLoadingData // Verifica si los datos se están cargando
                   ? Center(
                 child: CircularProgressIndicator(),
               )

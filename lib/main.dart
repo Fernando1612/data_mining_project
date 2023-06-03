@@ -60,66 +60,60 @@ class MainPage extends StatelessWidget {
             ListTile(
               title: Text('EDA'),
               onTap: () {
-                // Acción al hacer clic en "Contacto"
+                // Acción al hacer clic en "EDA"
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ExploracionDatos()
-                  ),
+                  MaterialPageRoute(builder: (context) => ExploracionDatos()),
                 );
               },
             ),
             ListTile(
               title: Text('PCA'),
               onTap: () {
-                // Acción al hacer clic en "Contacto"
+                // Acción al hacer clic en "PCA"
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PCA()
-                  ),
+                  MaterialPageRoute(builder: (context) => PCA()),
                 );
               },
             ),
             ListTile(
               title: Text('Bosques Clasificación'),
               onTap: () {
-                // Acción al hacer clic en "Contacto"
+                // Acción al hacer clic en "Bosques Clasificación"
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => BosquesScreen()
-                  ),
+                  MaterialPageRoute(builder: (context) => BosquesScreen()),
                 );
               },
             ),
             ListTile(
               title: Text('Bosques Predicción'),
               onTap: () {
-                // Acción al hacer clic en "Contacto"
+                // Acción al hacer clic en "Bosques Predicción"
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => BosquesPrediccion()
-                  ),
+                  MaterialPageRoute(builder: (context) => BosquesPrediccion()),
                 );
               },
             ),
             ListTile(
               title: Text('Kmeans'),
               onTap: () {
-                // Acción al hacer clic en "Contacto"
+                // Acción al hacer clic en "Kmeans"
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Clasificacion()
-                  ),
+                  MaterialPageRoute(builder: (context) => Clasificacion()),
                 );
               },
             ),
             ListTile(
               title: Text('Cargar modelo'),
               onTap: () {
-                // Acción al hacer clic en "Contacto"
+                // Acción al hacer clic en "Cargar modelo"
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CargarModelo()
-                  ),
+                  MaterialPageRoute(builder: (context) => CargarModelo()),
                 );
               },
             ),

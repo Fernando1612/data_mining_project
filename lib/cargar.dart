@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +19,7 @@ class _CargarModeloState extends State<CargarModelo> {
     obtenerArchivosPkl();
   }
 
+  // Obtener la lista de archivos .pkl disponibles en el servidor
   Future<void> obtenerArchivosPkl() async {
     try {
       final response = await http.get(Uri.parse('http://127.0.0.1:5000/archivos_pkl'));
@@ -36,6 +36,7 @@ class _CargarModeloState extends State<CargarModelo> {
     }
   }
 
+  // Abrir la ventana de detalles del archivo seleccionado y cargar el modelo clasificador correspondiente
   void abrirVentanaArchivoSeleccionado(String archivo) {
     cargarModeloClasificador(archivo);
     Navigator.push(
@@ -46,6 +47,7 @@ class _CargarModeloState extends State<CargarModelo> {
     );
   }
 
+  // Cargar el modelo clasificador utilizando el archivo .pkl seleccionado
   Future<void> cargarModeloClasificador(String filePath) async {
     final url = Uri.parse('http://127.0.0.1:5000/cargar-modelo-clasificador?file_path=$filePath.pkl');
     try {
