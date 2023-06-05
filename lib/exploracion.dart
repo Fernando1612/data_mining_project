@@ -193,10 +193,23 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
                 'Análisis Exploratorio de Datos (EDA)',
                 style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
               ),
+              const Text(
+                'El análisis nos permitirá tener una idea de la estructura de '
+                    'los datos. Esto dará paso a la selección de tu variable y '
+                    'las características que la acompañan. También permite '
+                    'elegir el mejor modelo.',
+                    style: TextStyle(fontSize: 16.0),
+              ),
               SizedBox(height: 16.0),
               const Text(
                 'Head preliminar de los datos',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+              ),
+              const Text(
+                'A continuación desplegamos solo los 5 primeros datos de cada '
+                'columna. Puedes observar la información que los acompaña.'
+                'Reiteramos que el Head no es la totalidad de los datos.',
+                style: TextStyle(fontSize: 16.0),
               ),
               SizedBox(height: 8.0),
               isLoading
@@ -207,21 +220,50 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
                 scrollDirection: Axis.horizontal,
                 child: DataTable(
                   columns: columnNames
-                      .map((name) => DataColumn(label: Text(name)))
+                      .map((name) => DataColumn(
+                    label: Text(
+                      name,
+                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                    ),
+                  ))
                       .toList(),
-                  rows: data.map((rowData) {
-                    return DataRow(
-                      cells: rowData.entries.map((entry) {
-                        return DataCell(Text(entry.value.toString()));
-                      }).toList(),
+                  rows: data.asMap().map((index, rowData) {
+                    return MapEntry(
+                      index,
+                      DataRow(
+                        color: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.selected)) {
+                              return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+                            }
+                            if (index.isEven) {
+                              return Colors.grey.withOpacity(0.3);
+                            }
+                            return null;
+                          },
+                        ),
+                        cells: rowData.entries.map((entry) {
+                          return DataCell(Text(entry.value.toString()));
+                        }).toList(),
+                      ),
                     );
-                  }).toList(),
+                  }).values.toList(),
                 ),
               ),
               SizedBox(height: 16.0),
               Text(
                 'Estadísticas de los datos',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'Se ofrecen los siguientes valores para describir los datos: \n'
+                'Count: Número de valores no nulos. \n'
+                'Mean: El valor promedio de los datos \n'
+                'Std: La desviación estandar \n'
+                'Min: El valor mínimo encontrado en la serie de datos \n'
+                'Porcentajes %: El percentil al 25%, 50% y 75%, respectivamente \n'
+                'Max: El valor máximo encontrado en la serie de datos.',
+                style: TextStyle(fontSize: 16.0),
               ),
               SizedBox(height: 8.0),
               columnNamesStats.isNotEmpty && dataStats.isNotEmpty
@@ -229,9 +271,19 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
                 scrollDirection: Axis.horizontal,
                 child: DataTable(
                   columns: [
-                    DataColumn(label: Text('index')),
+                    DataColumn(label:
+                    Text(
+                        'index',
+                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                    )
+                    ),
                     ...columnNamesStats.map(
-                          (name) => DataColumn(label: Text(name)),
+                          (name) => DataColumn(label:
+                          Text(
+                              name,
+                              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                          )
+                          ),
                     ),
                   ],
                   rows: dataStats.asMap().entries.map(
@@ -239,6 +291,17 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
                       int index = entry.key;
                       Map<String, dynamic> rowData = entry.value;
                       return DataRow(
+                        color: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.selected)) {
+                              return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+                            }
+                            if (index.isEven) {
+                              return Colors.grey.withOpacity(0.3);
+                            }
+                            return null;
+                          },
+                        ),
                         cells: [
                           DataCell(Text(indexNameStats[index])),
                           ...rowData.entries.map((entry) {
@@ -256,7 +319,13 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
               SizedBox(height: 16.0),
               Text(
                 'Tabla de Nulls:',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'Se muestra una tabla que otorga el conteo de los valores nulos '
+                'o vacíos por columna. Un valor de 0 indica que no se hayaron '
+                'estos valores en el set de datos provisto.',
+                style: TextStyle(fontSize: 16.0),
               ),
               SizedBox(height: 8.0),
               columnNamesNulls.isNotEmpty && dataNull.isNotEmpty
@@ -264,9 +333,16 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
                 scrollDirection: Axis.horizontal,
                 child: DataTable(
                   columns: [
-                    DataColumn(label: Text('Columnas')),
+                    DataColumn(label:
+                    Text(
+                        'Columnas',
+                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                    )),
                     ...columnNamesNulls.map(
-                          (name) => DataColumn(label: Text(name)),
+                          (name) => DataColumn(label: Text(
+                              name,
+                              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)
+                          )),
                     ),
                   ],
                   rows: dataNull.asMap().entries.map(
@@ -274,6 +350,17 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
                       int index = entry.key;
                       Map<String, dynamic> rowData = entry.value;
                       return DataRow(
+                        color: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.selected)) {
+                              return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+                            }
+                            if (index.isEven) {
+                              return Colors.grey.withOpacity(0.3);
+                            }
+                            return null;
+                          },
+                        ),
                         cells: [
                           DataCell(Text(indexNameNulls[index])),
                           ...rowData.entries.map((entry) {
@@ -293,9 +380,24 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
                 alignment: Alignment.center,
                 child: Text(
                   'Histogramas',
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                 ),
               ),
+              Text(
+                'Representación visual de la distribución de frecuencia de un '
+                  'conjunto de datos. Se utiliza para mostrar cómo se '
+                  'distribuyen los valores en un conjunto de datos y proporciona '
+                  'información sobre la forma de la distribución, los valores '
+                  'más comunes y los valores extremos.\n'
+                'En un histograma, el eje horizontal representa las diferentes '
+                  'categorías o rangos de valores del conjunto de datos, y el '
+                  'eje vertical muestra la frecuencia o la cantidad de veces que '
+                  'ocurre cada categoría o rango. Cada barra en el histograma '
+                  'representa una categoría o rango y su altura representa la '
+                  'frecuencia de esa categoría.',
+                style: TextStyle(fontSize: 16.0),
+              ),
+
               SizedBox(height: 8.0),
               Align(
                 alignment: Alignment.center,
@@ -318,8 +420,17 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
                 alignment: Alignment.center,
                 child: Text(
                   'Diagramas de caja',
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                 ),
+              ),
+              Text(
+                'Un diagrama de caja, también conocido como diagrama de caja y '
+                  'bigotes o box plot en inglés, es una herramienta gráfica '
+                  'que se utiliza para representar la distribución estadística '
+                  'de un conjunto de datos numéricos. Proporciona información '
+                  'sobre la posición central, la dispersión y los valores '
+                  'atípicos de los datos.',
+                style: TextStyle(fontSize: 16.0),
               ),
               SizedBox(height: 8.0),
               Align(
@@ -343,8 +454,22 @@ class _ExploracionDatosState extends State<ExploracionDatos> {
                 alignment: Alignment.center,
                 child: Text(
                   'Mapa de calor',
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                 ),
+              ),
+              Text(
+                'Un mapa de calor, también conocido como mapa de colores o '
+                  'heatmap en inglés, es una representación visual de datos '
+                  'donde se utilizan colores para mostrar la intensidad o el '
+                  'valor relativo de una variable en diferentes regiones o '
+                  'puntos de un espacio bidimensional.\n'
+                  'En un mapa de calor, se asigna un color específico a cada '
+                  'valor o rango de valores de la variable que se está '
+                  'representando. Generalmente, se utiliza una escala de '
+                  'colores donde los tonos más oscuros o intensos representan '
+                  'valores altos, y los tonos más claros o suaves representan '
+                  'valores bajos.',
+                style: TextStyle(fontSize: 16.0),
               ),
               SizedBox(height: 8.0),
               Align(
