@@ -171,13 +171,35 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bosques Predicción'),
+        title: Text('Bosques de Predicción'),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, // Alineación a la izquierda
             children: [
+              Text(
+                'Parámetros para entrenar un Bosque de Predicción',
+                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                textAlign: TextAlign.justify,
+                'Un bosque de predicción, también conocido como bosque aleatorio '
+                  'o Random Forest en inglés, es un algoritmo de aprendizaje '
+                  'automático supervisado utilizado para la clasificación y regresión. '
+                  'Se basa en la combinación de múltiples árboles de decisión independientes '
+                  'entre sí para realizar predicciones.\n'
+                'Cuando se realiza una predicción en un bosque de predicción, cada '
+                'árbol del bosque emite su propia predicción y luego se toma una '
+                  'votación (en el caso de clasificación) o se promedia (en el caso '
+                  'de regresión) para obtener la predicción final del bosque.',
+                style: TextStyle(fontSize: 16.0),
+              ),
+              Text(
+                'Columnas Candidatas para ser Columna Objetivo',
+                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+              ),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -195,6 +217,11 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
                   ],
                 ),
               ),
+              Text(
+                '\nTu columna objetivo representa la variable que se quiere predecir.' ''
+                    'Introduce una de las mostradas anteriormente, tal cual apareció.',
+                style: TextStyle(fontSize: 16.0),
+              ),
               SizedBox(height: 16.0),
               TextField(
                 decoration: InputDecoration(
@@ -202,6 +229,13 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
                   border: OutlineInputBorder(),
                 ),
                 onChanged: updateTargetColumn,
+              ),
+              Text(
+                '\nEl número de estimadores representa el número de árboles que '
+                    'conformarán nuestro bosque. Un valor recomendado es 100. Valores '
+                    'muy altos pueden ralentizar el algoritmo y valores muy bajos '
+                    'podrían impactar negativamente en su desempeño.',
+                style: TextStyle(fontSize: 16.0),
               ),
               SizedBox(height: 16.0),
               TextField(
@@ -216,6 +250,15 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
                   });
                 },
               ),
+              Text(
+                '\nEl criterio es la función que se utilizará para determinar '
+                    'la mejor división en cada nodo. Se tienen las siguientes opciones:\n'
+                    '• "squared_error" para utilizar el error medio cuadrado.\n'
+                    '• "absolute_error" para utilizar el error medio absoluto. Más lento. \n'
+                    '• "poisson" para utilizar la reducción de la desviacion de Poisson.',
+
+                  style: TextStyle(fontSize: 16.0),
+              ),
               SizedBox(height: 16.0),
               TextField(
                 decoration: InputDecoration(
@@ -229,6 +272,12 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
                 },
               ),
               SizedBox(height: 16.0),
+              Text(
+                '\nEn número, la profundidad máxima es el nivel o expansión máxima de nodos '
+                    'en los árboles. Por default no tiene esta restricción, se recomienda '
+                    'modificar si se presenta un sobre ajuste.',
+                style: TextStyle(fontSize: 16.0),
+              ),
               TextField(
                 decoration: InputDecoration(
                   labelText: 'Profundidad máxima',
@@ -242,6 +291,11 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
                 },
               ),
               SizedBox(height: 16.0),
+              Text(
+                '\nEl número mínimo de muestras requeridas para particionar un nodo '
+                    'de un árbol. Por Default tiene un mínimo de 2.',
+                style: TextStyle(fontSize: 16.0),
+              ),
               TextField(
                 decoration: InputDecoration(
                   labelText: 'Número mínimo de muestras para dividir un nodo',
@@ -255,6 +309,11 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
                 },
               ),
               SizedBox(height: 16.0),
+              Text(
+                '\nEl número mínimo de muestras requeridas para generar un nodo hoja '
+                    'y considerarla valida. Determina si un nodo es o no, un nodo hoja.',
+                style: TextStyle(fontSize: 16.0),
+              ),
               TextField(
                 decoration: InputDecoration(
                   labelText: 'Número mínimo de muestras para formar una hoja',
@@ -267,10 +326,18 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
                   });
                 },
               ),
+              Text(
+                '\nEl número de caracteristicas a considerar para generar la mejor '
+                    'división en un nodo de un árbol. Se puede configurar de la siguiente forma: \n'
+                    '• "sqrt" para utilizar la raiz del numero de caracteristicas .\n'
+                    '• "log2" para utilizar el logaritmo base 2 de las caracteristicas. \n'
+                    '• "auto" para un valor igual al número de características',
+                style: TextStyle(fontSize: 16.0),
+              ),
               SizedBox(height: 16.0),
               TextField(
                 decoration: InputDecoration(
-                  labelText: 'Número de características a considerar',
+                  labelText: 'Número máximo de características a considerar',
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (value) {
@@ -290,7 +357,7 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'MSE: ${mse.toStringAsFixed(4)}',
+                      'Error Cuadrático Medio (MSE). : ${mse.toStringAsFixed(4)}',
                       style: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
@@ -332,6 +399,18 @@ class _BosquesPrediccionState extends State<BosquesPrediccion> {
                       ),
                     ),
                     if (predictImage != null) ...[
+                      Text(
+                        '\n\nGráfica de Pronóstico',
+                        style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'Es una representación gráfica utilizada para evaluar '
+                            'el rendimiento de nuestras predicciones en comparación '
+                            'con los valores reales. Si los colores se encuentran muy '
+                            'dispersos, se puede intentar mejorar el modelo variando '
+                            'los parámetros.',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
                       SizedBox(height: 16.0),
                       Image.memory(predictImage),
                     ],

@@ -145,13 +145,28 @@ class _ClasificacionState extends State<Clasificacion> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kmeans'),
+        title: Text('Modelo de Kmeans'),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, // Alineación a la izquierda
             children: [
+              Text(
+                'K-means para Clustering Particional',
+                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+              ),
+          Text(
+            'Permite crear grupos (clusters) para organizar y segmentar datos similares '
+            'dentro de ellos. Está orientado a resolver problemas de optimización.\n'
+            'Como entrada, se indica el numero de clusters que quieres generar. Para '
+            'escoger un número adecuado de clusters, se provee una gráfica por el método del codo '
+            '(Elbow Method). El valor indicado por la línea naranja que parte al eje X '
+            'es el número adecuado de clusters a ingresar.\n',
+            style: TextStyle(fontSize: 16.0),
+            textAlign: TextAlign.justify,
+          ),
               Row(
                 children: [
                   Expanded(
@@ -159,6 +174,7 @@ class _ClasificacionState extends State<Clasificacion> {
                       controller: componentsController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
+                        border: OutlineInputBorder(),
                         labelText: 'Número de clusters',
                       ),
                       onChanged: (value) {
@@ -171,6 +187,12 @@ class _ClasificacionState extends State<Clasificacion> {
                   SizedBox(width: 16.0),
                   DropdownButton<String?>(
                     value: selectedScaler,
+                    icon: const Icon(Icons.arrow_downward),
+                    elevation: 16,
+                    underline: Container(
+                      height: 2,
+                      color: Colors.blueAccent,
+                    ),
                     onChanged: (String? newValue) {
                       setState(() {
                         selectedScaler = newValue!;
@@ -214,17 +236,55 @@ class _ClasificacionState extends State<Clasificacion> {
                   : SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: isColumnDataNotEmpty() && isDataLoaded
-                    ? DataTable(
-                  columns: columnNames
-                      .map((name) => DataColumn(label: Text(name)))
-                      .toList(),
-                  rows: data.map((rowData) {
-                    return DataRow(
-                      cells: rowData.entries.map((entry) {
-                        return DataCell(Text(entry.value.toString()));
+                    ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Head de datos clusterizados en columna ClusterP',
+                      style: TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'La siguiente gráfica muestra a que cluster se agrupó la celda '
+                      'con relación a la columna ClusterP. Los clusteres comienzan con '
+                      'una notación en 0 y avanza segun el numero de clusteres definidos.',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                      ),
+                    ),
+                    DataTable(
+                      // DataTable Completa
+                      columns: columnNames.map((name) {
+                        return DataColumn(
+                          label: Text(
+                            name,
+                            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                          ),
+                        );
                       }).toList(),
-                    );
-                  }).toList(),
+                      rows: data.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final rowData = entry.value;
+                        return DataRow(
+                          color: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+                            if (states.contains(MaterialState.selected)) {
+                              return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+                            }
+                            if (index % 2 == 1) {
+                              // Filas pares (empezando desde el índice 0)
+                              return Colors.grey.withOpacity(0.3);
+                            }
+                            return null;
+                          }),
+                          cells: rowData.entries.map((entry) {
+                            return DataCell(Text(entry.value.toString()));
+                          }).toList(),
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 )
                     : Container(),
               ),
@@ -236,17 +296,50 @@ class _ClasificacionState extends State<Clasificacion> {
                   : SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: isColumnDataNotEmpty() && isDataLoaded
-                    ? DataTable(
-                  columns: columnNamesCount
-                      .map((name) => DataColumn(label: Text(name)))
-                      .toList(),
-                  rows: dataCount.map((rowData) {
-                    return DataRow(
-                      cells: rowData.entries.map((entry) {
-                        return DataCell(Text(entry.value.toString()));
+                    ? Column(
+                  children: [
+                    Text(
+                      'Conteo de agrupaciones por clusteres',
+                      style: TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'Se observa cuántos elementos tiene en total cada cluster',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                      ),
+                    ),
+                    DataTable(
+                      columns: columnNamesCount.map((name) {
+                        return DataColumn(
+                          label: Text(
+                            name,
+                            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                          ),
+                        );
                       }).toList(),
-                    );
-                  }).toList(),
+                      rows: dataCount.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final rowData = entry.value;
+                        return DataRow(
+                          color: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+                            if (states.contains(MaterialState.selected)) {
+                              return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+                            }
+                            if (index % 2 == 1) { // Filas pares (empezando desde el índice 0)
+                              return Colors.grey.withOpacity(0.3);
+                            }
+                            return null;
+                          }),
+                          cells: rowData.entries.map((entry) {
+                            return DataCell(Text(entry.value.toString()));
+                          }).toList(),
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 )
                     : Container(),
               ),
@@ -258,30 +351,69 @@ class _ClasificacionState extends State<Clasificacion> {
                   : SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: isColumnDataNotEmpty() && isDataLoaded
-                    ? DataTable(
-                  columns: columnNamesCentroide
-                      .map((name) => DataColumn(label: Text(name)))
-                      .toList(),
-                  rows: dataCentroide.map((rowData) {
-                    return DataRow(
-                      cells: rowData.entries.map((entry) {
-                        return DataCell(Text(entry.value.toString()));
+                    ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                      child: Text(
+                        "Centroides y valores de cada cluster creado",
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    DataTable(
+                      columns: columnNamesCentroide.map((name) {
+                        return DataColumn(
+                          label: Text(
+                            name,
+                            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                          ),
+                        );
                       }).toList(),
-                    );
-                  }).toList(),
+                      rows: dataCentroide.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final rowData = entry.value;
+                        return DataRow(
+                          color: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+                            if (states.contains(MaterialState.selected)) {
+                              return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+                            }
+                            if (index % 2 == 1) { // Filas pares (empezando desde el índice 0)
+                              return Colors.grey.withOpacity(0.3);
+                            }
+                            return null;
+                          }),
+                          cells: rowData.entries.map((entry) {
+                            return DataCell(Text(entry.value.toString()));
+                          }).toList(),
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 )
                     : Container(),
               ),
               SizedBox(height: 16.0),
               if (encodedImage != '') ...[
                 SizedBox(height: 16.0),
+                Text(
+                    "Gráfica de elementos y Centros del Cluster",
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                ),
                 Image.memory(predictImage),
               ],
               SizedBox(height: 16.0),
               if (!isLoadingData && isDataLoaded) ...[
-                ElevatedButton(
-                  onPressed: saveDataframe,
-                  child: Text('Guardar dataframe'),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: saveDataframe,
+                    child: Text('Guardar dataframe'),
+                  ),
                 ),
               ],
             ],
