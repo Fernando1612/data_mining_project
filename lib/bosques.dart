@@ -164,13 +164,34 @@ class _BosquesScreenState extends State<BosquesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bosques Clasificación'),
+        title: Text('Bosques de Clasificación'),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, // Alineación a la izquierda
             children: [
+              Text(
+                'Parámetros para entrenar un Bosque de Clasificación',
+                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                textAlign: TextAlign.justify,
+                'Un bosque de clasificación, también conocido como Random Forest '
+                  'en inglés, es un algoritmo de aprendizaje automático que combina '
+                  'múltiples árboles de decisión para realizar tareas de clasificación.\n'
+                'En un bosque de clasificación, se crean y entrenan varios árboles de decisión '
+                  'independientes utilizando diferentes subconjuntos de datos y características '
+                  'aleatorias. Cada árbol en el bosque toma una decisión de clasificación basada '
+                  'en las características de entrada y vota por una clase. La clase más votada se '
+                  'considera la clasificación final del bosque.\n',
+                style: TextStyle(fontSize: 16.0),
+              ),
+              Text(
+                'Columnas Candidatas para ser Columna Objetivo',
+                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+              ),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -188,6 +209,11 @@ class _BosquesScreenState extends State<BosquesScreen> {
                   ],
                 ),
               ),
+              Text(
+                '\nTu columna objetivo representa la variable que se quiere predecir o clasificar.' ''
+                    'Introduce una de las mostradas anteriormente, tal cual apareció.',
+                style: TextStyle(fontSize: 16.0),
+              ),
               SizedBox(height: 16.0),
               TextField(
                 decoration: InputDecoration(
@@ -195,6 +221,13 @@ class _BosquesScreenState extends State<BosquesScreen> {
                   border: OutlineInputBorder(),
                 ),
                 onChanged: updateTargetColumn,
+              ),
+              Text(
+                '\nEl número de estimadores representa el número de árboles que '
+                'conformarán nuestro bosque. Un valor recomendado es 100. Valores '
+                'muy altos pueden ralentizar el algoritmo y valores muy bajos '
+                'podrían impactar negativamente en su desempeño.',
+                style: TextStyle(fontSize: 16.0),
               ),
               SizedBox(height: 16.0),
               TextField(
@@ -209,6 +242,13 @@ class _BosquesScreenState extends State<BosquesScreen> {
                   });
                 },
               ),
+              Text(
+                '\nEl criterio es la función que se utilizará para determinar '
+                'la mejor división en cada nodo. Se tienen dos opciones:\n'
+                '• "gini" para utilizar la impureza de Gini y\n'
+                '• "log_loss" y "entropy" para la ganancia de Shannon.',
+                style: TextStyle(fontSize: 16.0),
+              ),
               SizedBox(height: 16.0),
               TextField(
                 decoration: InputDecoration(
@@ -222,6 +262,12 @@ class _BosquesScreenState extends State<BosquesScreen> {
                 },
               ),
               SizedBox(height: 16.0),
+              Text(
+                  '\nEn número, la profundidad máxima es el nivel o expansión máxima de nodos '
+                  'en los árboles. Por default no tiene esta restricción, se recomienda '
+                      'modificar si se presenta un sobre ajuste.',
+                  style: TextStyle(fontSize: 16.0),
+              ),
               TextField(
                 decoration: InputDecoration(
                   labelText: 'Profundidad máxima',
@@ -235,6 +281,11 @@ class _BosquesScreenState extends State<BosquesScreen> {
                 },
               ),
               SizedBox(height: 16.0),
+              Text(
+                '\nEl número mínimo de muestras requeridas para particionar un nodo '
+                    'de un árbol. Por Default tiene un mínimo de 2.',
+                style: TextStyle(fontSize: 16.0),
+              ),
               TextField(
                 decoration: InputDecoration(
                   labelText: 'Número mínimo de muestras para dividir un nodo',
@@ -248,6 +299,11 @@ class _BosquesScreenState extends State<BosquesScreen> {
                 },
               ),
               SizedBox(height: 16.0),
+              Text(
+                '\nEl número mínimo de muestras requeridas para generar un nodo hoja '
+                    'y considerarla valida. Determina si un nodo es o no, un nodo hoja.',
+                style: TextStyle(fontSize: 16.0),
+              ),
               TextField(
                 decoration: InputDecoration(
                   labelText: 'Número mínimo de muestras para formar una hoja',
@@ -259,6 +315,13 @@ class _BosquesScreenState extends State<BosquesScreen> {
                     minSamplesLeaf = int.tryParse(value) ?? 1;
                   });
                 },
+              ),
+              Text(
+                '\nEl número de caracteristicas a considerar para generar la mejor '
+                    'división en un nodo de un árbol. Es un número entero, si se deja '
+                    'vacío, se consideraran  todas las características. Este parámetro busca '
+                    'controlar la dimensionalidad y complejidad del modelo.',
+                style: TextStyle(fontSize: 16.0),
               ),
               SizedBox(height: 16.0),
               TextField(
@@ -283,17 +346,43 @@ class _BosquesScreenState extends State<BosquesScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'El valor de precisión del modelo es: ${accuracy.toStringAsFixed(2)}',
+                      'El valor de precisión del modelo es: ${accuracy.toStringAsFixed(2)}\n'
+                          'Un modelo aceptable se considera a partir de 0.8. Considera variar '
+                          'tus parametros para establecer un mejor desempeño.\n',
                       style: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     if (rocImage != null) ...[
+                      Text(
+                        'Curva ROC (Receiver Operating Characteristic)',
+                        style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '\nEs una representación gráfica utilizada para evaluar '
+                        'el rendimiento de un clasificador binario en problemas de clasificación.'
+                        'La curva ROC es útil porque permite evaluar y comparar '
+                        'el rendimiento de diferentes clasificadores o modelos en '
+                            'términos de su capacidad para distinguir entre clases positivas y negativas.',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
                       SizedBox(height: 16.0),
                       Image.memory(rocImage),
                     ],
                     if (matrixImage != null) ...[
+                      Text(
+                        'Matriz de Confusión',
+                        style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '\nSe utiliza para evaluar el rendimiento de un modelo de '
+                        'clasificación en problemas de aprendizaje automático supervisado. '
+                        'Proporciona una visión general de los resultados de la '
+                        'clasificación al mostrar la cantidad de muestras que se '
+                        'clasificaron correctamente o incorrectamente en cada una de las clases.',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
                       SizedBox(height: 16.0),
                       Image.memory(matrixImage),
                     ],
